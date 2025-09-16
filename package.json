@@ -1,0 +1,12 @@
+{
+  "name": "pr_discord_publisher",
+  "version": "1.0.0",
+  "description": "A GitHub Action to publish pull request details to a Discord channel.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Douglas H. Tripoloni",
+  "license": "ISC"
+}
