@@ -27,9 +27,18 @@ client.on("messageCreate", async (message) => {
     const link = args[0];
     const targetBranch = args[1] || "main"; // default "main" se não passar
 
+    // 🗑️ Apaga a mensagem do usuário SEMPRE
+    try {
+      await message.delete();
+    } catch (err) {
+      console.error("Erro ao deletar a mensagem:", err);
+    }
+
     if (!link) {
-      const warn = await message.reply("⚠️ Você precisa passar o link do PR!");
-      setTimeout(() => warn.delete().catch(() => {}), 5000); // auto delete aviso
+      const warn = await message.channel.send(
+        "⚠️ Você precisa passar o link do PR!"
+      );
+      setTimeout(() => warn.delete().catch(() => {}), 5000); // auto delete
       return;
     }
 
@@ -61,14 +70,6 @@ client.on("messageCreate", async (message) => {
       ? `<@&${process.env.PR_ROLE_ID}>`
       : "@everyone";
 
-    // 🗑️ Apaga a mensagem original do usuário
-    try {
-      await message.delete();
-    } catch (err) {
-      console.error("Erro ao deletar a mensagem:", err);
-    }
-
-    // Envia a mensagem formatada
     await message.channel.send({ content: mention, embeds: [embed] });
   }
 });
