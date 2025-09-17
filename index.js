@@ -25,11 +25,15 @@ client.on("messageCreate", async (message) => {
 
   if (command === "pr") {
     const link = args[0];
+    const targetBranch = args[1] || "main"; // default "main" se não passar
+
     if (!link) {
-      return message.reply("⚠️ Você precisa passar o link do PR!");
+      const warn = await message.reply("⚠️ Você precisa passar o link do PR!");
+      setTimeout(() => warn.delete().catch(() => {}), 5000); // auto delete aviso
+      return;
     }
 
-    // Regex para extrair repo e número do PR do link Azure DevOps
+    // Regex para extrair repo e número do PR
     const regex = /_git\/([^/]+)\/pullrequest\/(\d+)/;
     const match = link.match(regex);
 
@@ -40,8 +44,6 @@ client.on("messageCreate", async (message) => {
       repo = match[1];
       prNumber = match[2];
     }
-
-    const targetBranch = "main"; // pode ser dinâmico se você quiser
 
     const embed = new EmbedBuilder()
       .setColor("#00FF7F")
@@ -59,6 +61,14 @@ client.on("messageCreate", async (message) => {
       ? `<@&${process.env.PR_ROLE_ID}>`
       : "@everyone";
 
+    // 🗑️ Apaga a mensagem original do usuário
+    try {
+      await message.delete();
+    } catch (err) {
+      console.error("Erro ao deletar a mensagem:", err);
+    }
+
+    // Envia a mensagem formatada
     await message.channel.send({ content: mention, embeds: [embed] });
   }
 });
