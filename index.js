@@ -1,15 +1,15 @@
-// index.js
 import { Client, GatewayIntentBits, Partials, EmbedBuilder } from "discord.js";
 import "dotenv/config";
+
+const PREFIX = ".";
 
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
-    GatewayIntentBits.DirectMessages,
   ],
-  partials: [Partials.Channel], // necessário para DM
+  partials: [Partials.Channel],
 });
 
 client.once("ready", () => {
@@ -18,30 +18,48 @@ client.once("ready", () => {
 
 client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
+  if (!message.content.startsWith(PREFIX)) return;
 
-  // Caso a mensagem venha por DM
-  if (message.channel.type === 1) {
-    const servidor = client.guilds.cache.get(process.env.SERVER_ID);
-    if (!servidor) return;
+  const args = message.content.slice(PREFIX.length).trim().split(/ +/);
+  const command = args.shift().toLowerCase();
 
-    const canal = servidor.channels.cache.get(process.env.CHANNEL_ID);
-    if (!canal?.isTextBased()) return;
+  if (command === "pr") {
+    const link = args[0];
+    if (!link) {
+      return message.reply("⚠️ Você precisa passar o link do PR!");
+    }
 
-    // Cria um embed bonitão
+    // Regex para extrair repo e número do PR do link Azure DevOps
+    const regex = /_git\/([^/]+)\/pullrequest\/(\d+)/;
+    const match = link.match(regex);
+
+    let repo = "desconhecido";
+    let prNumber = "???";
+
+    if (match) {
+      repo = match[1];
+      prNumber = match[2];
+    }
+
+    const targetBranch = "main"; // pode ser dinâmico se você quiser
+
     const embed = new EmbedBuilder()
-      .setColor("#5865F2") // azul padrão do Discord
-      .setTitle("📢 Nova mensagem recebida!")
-      .setDescription(message.content)
+      .setColor("#00FF7F")
+      .setTitle("🚀 PULL REQUEST 🚀")
+      .addFields(
+        { name: "🔗 Link", value: link },
+        { name: "📂 Repositório", value: repo, inline: true },
+        { name: "📌 PR Number", value: `#${prNumber}`, inline: true },
+        { name: "🌿 Target branch", value: targetBranch }
+      )
       .setFooter({ text: `Enviado por ${message.author.tag}` })
       .setTimestamp();
 
-    // Define a menção (role ou everyone)
-    const mention = process.env.ROLE_ID
-      ? `<@&${process.env.ROLE_ID}>`
+    const mention = process.env.PR_ROLE_ID
+      ? `<@&${process.env.PR_ROLE_ID}>`
       : "@everyone";
 
-    // Envia
-    await canal.send({ content: mention, embeds: [embed] });
+    await message.channel.send({ content: mention, embeds: [embed] });
   }
 });
 
