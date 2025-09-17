@@ -67,7 +67,7 @@ client.on("messageCreate", async (message) => {
       .setTimestamp();
 
     const mention = process.env.PR_ROLE_ID
-      ? `<@&${process.env.PR_ROLE_ID}>`
+      ? `@${process.env.PR_ROLE_ID}`
       : "@everyone";
 
     await message.channel.send({ content: mention, embeds: [embed] });
