@@ -8,5 +8,8 @@
   },
   "keywords": [],
   "author": "Douglas H. Tripoloni",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^14.22.1"
+  }
 }
