@@ -4,12 +4,22 @@
   "description": "A GitHub Action to publish pull request details to a Discord channel.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
   },
   "keywords": [],
   "author": "Douglas H. Tripoloni",
   "license": "ISC",
   "dependencies": {
-    "discord.js": "^14.22.1"
-  }
+    "discord.js": "^14.22.1",
+    "dotenv": "^17.2.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DouglasHT/pr_discord_publisher.git"
+  },
+  "bugs": {
+    "url": "https://github.com/DouglasHT/pr_discord_publisher/issues"
+  },
+  "homepage": "https://github.com/DouglasHT/pr_discord_publisher#readme"
 }
